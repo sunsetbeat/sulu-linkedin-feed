@@ -1,0 +1,14 @@
+{
+    "sunsetbeat": {
+        "linkedin_feed": {
+            "menu_name": "Social Media",
+            "name": "LinkedIn Feeds"
+        },
+        "input": {
+            "enable": "Online",
+            "text": "Text",
+            "manual_update": "Aktualisieren",
+            "last_change": "Letzte Aktualisierung"
+        }
+    }
+}
