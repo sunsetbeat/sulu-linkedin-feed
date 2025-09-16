@@ -1,0 +1,26 @@
+{
+    "name": "sunsetbeat/sulu-linkedin-feed",
+    "description": "A Sulu/Symfony bundle that fetches and renders LinkedIn feeds as Sulu content blocks.",
+    "type": "sulu-bundle",
+    "version": "1.0.0",
+    "require": {
+        "sulu/sulu": "^2.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "sunsetbeat\\SuluLinkedinFeed\\": "./src"
+        }
+    },
+    "authors": [
+        {
+            "name": "Marco Licciardi-Mues",
+            "homepage": "https://www.sunset-beat.de/"
+        }
+    ],
+    "homepage": "https://www.sunset-beat.de/",
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}
