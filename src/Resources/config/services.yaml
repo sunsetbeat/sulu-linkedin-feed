@@ -1,0 +1,24 @@
+services:
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    sunsetbeat\SuluLinkedinFeed\:
+        resource: '../../*'
+        exclude: '../../{DependencyInjection,Entity,Tests}'
+
+    sunsetbeat\SuluLinkedinFeed\Admin\LinkedinFeedAdmin:
+        arguments:
+            $linkedin_feed_config: '%sunsetbeat_sulu_linkedin_feed.config%'
+
+    sunsetbeat.sulu_linkedin_feed.linkedin_feed_repository:
+        class: sunsetbeat\SuluLinkedinFeed\Repository\LinkedinFeedRepository
+        factory: ['@doctrine', 'getRepository']
+        arguments: ['sunsetbeat\SuluLinkedinFeed\Entity\LinkedinFeed']
+
+    sunsetbeat\SuluLinkedinFeed\Content\LinkedinFeedDataProvider:
+        arguments:
+            $repository: '@sunsetbeat.sulu_linkedin_feed.linkedin_feed_repository'
+        tags:
+            [{ name: 'sulu.smart_content.data_provider', alias: 'linkedin_feed' }]
+
