@@ -1,0 +1,94 @@
+<?xml version="1.0" ?>
+<list xmlns="http://schemas.sulu.io/list-builder/list">
+    <key>linkedin_feed</key>
+
+    <joins name="changer">
+        <join>
+            <entity-name>%sulu.model.user.class%_changer</entity-name>
+            <field-name>sunsetbeat\SuluLinkedinFeed\Entity\LinkedinFeed.changer</field-name>
+        </join>
+        <join>
+            <entity-name>%sulu.model.contact.class%_changer</entity-name>
+            <field-name>%sulu.model.user.class%_changer.contact</field-name>
+        </join>
+    </joins>
+
+    <joins name="creator">
+        <join>
+            <entity-name>%sulu.model.user.class%_creator</entity-name>
+            <field-name>sunsetbeat\SuluLinkedinFeed\Entity\LinkedinFeed.creator</field-name>
+        </join>
+        <join>
+            <entity-name>%sulu.model.contact.class%_creator</entity-name>
+            <field-name>%sulu.model.user.class%_creator.contact</field-name>
+        </join>
+    </joins>
+    
+    <properties>
+        <property name="id" visibility="no">
+            <field-name>id</field-name>
+            <entity-name>sunsetbeat\SuluLinkedinFeed\Entity\LinkedinFeed</entity-name>
+        </property>
+
+        <property name="text" visibility="always" searchability="yes" translation="sunsetbeat.input.text">
+            <field-name>text</field-name>
+            <entity-name>sunsetbeat\SuluLinkedinFeed\Entity\LinkedinFeed</entity-name>
+        </property>
+
+        <property name="enabled" visibility="always" type="bool" translation="sunsetbeat.input.enable">
+            <field-name>enabled</field-name>
+            <entity-name>sunsetbeat\SuluLinkedinFeed\Entity\LinkedinFeed</entity-name>
+        </property>
+
+        <property name="manual_update" visibility="always" type="bool" translation="sunsetbeat.input.manual_update">
+            <field-name>manual_update</field-name>
+            <entity-name>sunsetbeat\SuluLinkedinFeed\Entity\LinkedinFeed</entity-name>
+        </property>
+
+        <property name="created" type="datetime" visibility="yes" translation="sulu_admin.created">
+            <field-name>created</field-name>
+            <entity-name>sunsetbeat\SuluLinkedinFeed\Entity\LinkedinFeed</entity-name>
+        </property>
+
+        <concatenation-property name="creator" visibility="no" searchability="yes" translation="sulu_admin.creator">
+            <field>
+                <field-name>firstName</field-name>
+                <entity-name>%sulu.model.contact.class%_creator</entity-name>
+
+                <joins ref="creator"/>
+            </field>
+            <field>
+                <field-name>lastName</field-name>
+                <entity-name>%sulu.model.contact.class%_creator</entity-name>
+
+                <joins ref="creator"/>
+            </field>
+        </concatenation-property>
+
+        <property name="last_change" type="datetime" visibility="yes" translation="sunsetbeat.input.last_change">
+            <field-name>last_change</field-name>
+            <entity-name>sunsetbeat\SuluLinkedinFeed\Entity\LinkedinFeed</entity-name>
+        </property>
+
+        <property name="changed" type="datetime" visibility="no" translation="sulu_admin.changed">
+            <field-name>changed</field-name>
+            <entity-name>sunsetbeat\SuluLinkedinFeed\Entity\LinkedinFeed</entity-name>
+        </property>
+
+        <concatenation-property name="changer" visibility="no" searchability="yes" translation="sulu_admin.changer">
+            <field>
+                <field-name>firstName</field-name>
+                <entity-name>%sulu.model.contact.class%_changer</entity-name>
+
+                <joins ref="changer"/>
+            </field>
+            <field>
+                <field-name>lastName</field-name>
+                <entity-name>%sulu.model.contact.class%_changer</entity-name>
+
+                <joins ref="changer"/>
+            </field>
+        </concatenation-property>
+    </properties>
+
+</list>

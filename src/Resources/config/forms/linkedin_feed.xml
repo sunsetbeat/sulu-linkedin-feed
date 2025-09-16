@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<form xmlns="http://schemas.sulu.io/template/template"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://schemas.sulu.io/template/template http://schemas.sulu.io/template/form-1.0.xsd"
+>
+    <key>linkedin_feed</key>
+
+    <properties>
+        <property name="text" type="text_editor" mandatory="true" colspan="12" disabledCondition="true">
+            <meta>
+                <title>sunsetbeat.input.text</title>
+            </meta>
+            <params>
+                <param name="headline" value="true"/>
+            </params>
+        </property>
+
+        <property name="manual_update" type="checkbox" colspan="12">
+            <meta>
+                <title>sunsetbeat.input.manual_update</title>
+            </meta>
+        </property>
+
+        <section name="tags">
+            <meta>
+                <title lang="en">Tags</title>
+                <title lang="de">Tags</title>
+            </meta>
+
+            <properties>
+                <property name="tags" type="tag_selection">
+                    <meta>
+                        <title>sulu_tag.tags</title>
+                    </meta>
+                </property>
+            </properties>
+        </section>
+
+        <section name="images">
+            <meta>
+                <title lang="en">Images</title>
+                <title lang="de">Bilder</title>
+            </meta>
+
+            <properties>
+                <property name="image_gallery" type="media_selection" mandatory="true" colspan="6" disabledCondition="true">
+                    <meta>
+                        <title>travel_master.input.image</title>
+                    </meta>
+                </property>
+            </properties>
+        </section>
+    </properties>
+</form>
