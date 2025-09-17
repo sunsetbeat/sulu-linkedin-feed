@@ -80,6 +80,9 @@ class ImportSuluLinkedinFeedCommand extends Command
                 if (isset($feed->elements)) {
                     foreach ($feed->elements as $key => $element) {
                         
+                        $created = (new \DateTimeImmutable())->setTimestamp((int) ($element->createdAt / 1000));
+                        $changed = (new \DateTimeImmutable())->setTimestamp((int) ($element->lastModifiedAt / 1000));
+                        
                         $active = false;
                         if (!isset($element->distribution->targetEntities)) {
                             $active = true;
@@ -91,7 +94,7 @@ class ImportSuluLinkedinFeedCommand extends Command
                                 }
                             }
                         }
-                        if ($active == false)
+                        if ($active == false || isset($element->reshareContext->parent))
                             continue;
 
                         // Get existing entry if exists
@@ -107,17 +110,19 @@ class ImportSuluLinkedinFeedCommand extends Command
                                 $linkedin_feed->setEnabled(true);
                             }
                             $linkedin_feed->setManualUpdate(true);
+                        } else {
+                            if ($linkedin_feed->getLastChange() != $changed) {
+                                $linkedin_feed->setManualUpdate(true);
+                            }
                         }
 
 
                         $linkedin_feed->setAuthor($element->author);
-                        $linkedin_feed->setText(nl2br($this->parseLinkedinHashtags($this->parseLinkedinMentions($element->commentary))));
+                        $linkedin_feed->setText(nl2br($this->parseLinkedinHashtags($this->parseLinkedinPersons($this->parseLinkedinMentions($element->commentary)))));
                         $linkedin_feed->setDump(json_encode($element));
                         
-                        $created = (new \DateTimeImmutable())->setTimestamp((int) ($element->createdAt / 1000));
                         $linkedin_feed->setCreated($created);
 
-                        $changed = (new \DateTimeImmutable())->setTimestamp((int) ($element->lastModifiedAt / 1000));
                         $linkedin_feed->setLastChange($changed);
 
                         $this->entityManager->persist($linkedin_feed);
@@ -200,7 +205,7 @@ class ImportSuluLinkedinFeedCommand extends Command
                                 $feed->removeImageGallery($image);
                             }
 
-                            $image_download = $this->downloadImage($media_feed->downloadUrl, $element->content->media->altText);
+                            $image_download = $this->downloadImage($media_feed->downloadUrl, $element->content->media->altText??'');
                             $feed->addImageGallery($image_download);
                             $feed->setManualUpdate(false);
                         } else {
@@ -315,6 +320,33 @@ class ImportSuluLinkedinFeedCommand extends Command
                  . '" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</a>';
         },
         $text
+        );
+    }
+
+    /**
+     * Parse LinkedIn mentions in text into HTML links.
+     *
+     * Supports:
+     *   @[Name](urn:li:organization:12345)
+     *   @[Name](urn:li:person:x6qQRn0dwb)
+     */
+    function parseLinkedinPersons(string $text): string
+    {
+        return preg_replace_callback(
+            '/@\[(.+?)\]\(urn:li:(person|organization):([^)]+)\)/',
+            function ($matches) {
+                $name = $matches[1];       // e.g. "Konstantinos Georgosopoulos"
+                $type = $matches[2];       // "person" or "organization"
+                $id   = $matches[3];       // e.g. "x6qQRn0dwb" or "2263391"
+
+                $url = $type === 'person'
+                    ? "https://www.linkedin.com/in/{$id}/"
+                    : "https://www.linkedin.com/company/{$id}/";
+
+                return '<a href="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8')
+                    . '" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</a>';
+            },
+            $text
         );
     }
 
