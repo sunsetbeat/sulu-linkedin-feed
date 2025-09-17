@@ -97,7 +97,7 @@ class LinkedinFeed implements AuditableInterface
     
     public function getManualUpdate(): ?bool { return $this->manual_update; }
     public function setManualUpdate(?bool $manual_update): self { $this->manual_update = $manual_update; return $this; }
-    public function getLastChange(): ?\DateTimeImmutable { return $this->last_change; }
+    public function getLastChange() { return $this->last_change; }
     public function setLastChange(?\DateTimeImmutable $last_change): self { $this->last_change = $last_change; return $this; }
 
     public function addImageGallery(MediaInterface $image_gallery): self { if (!$this->image_gallery->contains($image_gallery)) { $this->image_gallery[] = $image_gallery; } return $this; }
