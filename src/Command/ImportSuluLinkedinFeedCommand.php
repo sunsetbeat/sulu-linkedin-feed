@@ -21,7 +21,7 @@ use Sulu\Bundle\MediaBundle\Entity\MediaInterface;
 
 // the name of the command is what users type after "php bin/console"
 #[AsCommand(
-    name: 'sunsetbeat:import-sozial-media-feed',
+    name: 'sunsetbeat:import-social-media-feed',
     description: 'Import Feeds.',
     hidden: false
 )]
@@ -245,8 +245,8 @@ class ImportSuluLinkedinFeedCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Import feeds from sozial media.')
-            ->setHelp('This command allows you to import feeds from sozial media.')
+            ->setDescription('Import feeds from social media.')
+            ->setHelp('This command allows you to import feeds from social media.')
             ->addOption(
                 'interface', // this is the name that users must type to pass this option (e.g. --iterations=5)
                 null, // this is the optional shortcut of the option name, which usually is just a letter (e.g. `i`, so users pass it as `-i`); use it for commonly used options or options with long names

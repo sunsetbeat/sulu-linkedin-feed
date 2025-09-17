@@ -27,7 +27,9 @@ composer require sunsetbeat/sulu-linkedin-feed
 Console command to import LinkedIn-Feed data:
 
 ```bash
-bin/console sunsetbeat:sulu-linkedin-feed --debug 1
+bin/console sunsetbeat:import-social-media-feed # All
+bin/console sunsetbeat:import-social-media-feed --interface linkedin_feed # Only LinkedIn Feed
+bin/console sunsetbeat:import-social-media-feed --interface linkedin_images # Only LinkedIn Images
 ```
 
 
