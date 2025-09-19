@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Mime\MimeTypes;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -177,7 +178,7 @@ class ImportSuluLinkedinFeedCommand extends Command
                                 $images_entry = $images->results->{$image->id} ?? null;
 
                                 if (isset($images_entry->downloadUrl)) {
-                                    $image_download = $this->downloadImage($images_entry->downloadUrl, $image->altText);
+                                    $image_download = $this->downloadImage($images_entry->downloadUrl, str_replace(':','_',$image->id), $image->altText);
                                     $feed->addImageGallery($image_download);
                                     $feed->setManualUpdate(false);
                                 }
@@ -205,7 +206,7 @@ class ImportSuluLinkedinFeedCommand extends Command
                                 $feed->removeImageGallery($image);
                             }
 
-                            $image_download = $this->downloadImage($media_feed->downloadUrl, $element->content->media->altText??'');
+                            $image_download = $this->downloadImage($media_feed->downloadUrl, str_replace(':','_',$element->content->media->id), $element->content->media->altText??'');
                             $feed->addImageGallery($image_download);
                             $feed->setManualUpdate(false);
                         } else {
@@ -350,10 +351,28 @@ class ImportSuluLinkedinFeedCommand extends Command
         );
     }
 
-    private function downloadImage($link, $altText = '') {
+    private function downloadImage($link, $name, $altText = '') {
         $path = dirname($_ENV['SYMFONY_DOTENV_PATH']);
-        $saveTo = $path.'/public/sunsetbeat_tmp_files/'.basename($link);
+        $saveTo = $path.'/public/sunsetbeat_tmp_files/'.$name;
         $collection = $this->systemCollectionManager->getSystemCollection('sunsetbeat.images_linkedin');
+
+        if (!file_exists($path.'/public/sunsetbeat_tmp_files')) {
+            mkdir($path.'/public/sunsetbeat_tmp_files', 0777, true);
+        }
+        $imageData = file_get_contents($link);
+        file_put_contents($saveTo, $imageData);
+        $mimeTypes = new MimeTypes();
+        $mimeType = $mimeTypes->guessMimeType($saveTo);
+
+        $extensions = $mimeTypes->getExtensions($mimeType);
+        if (!empty($extensions)) {
+            $extension = $extensions[0];
+            $newPath = $saveTo . '.' . $extension;
+            if (!file_exists($newPath)) {
+                rename($saveTo, $newPath);
+            }
+            $saveTo = $newPath;
+        }        
 
         $image_chk = $this->entityManager->getRepository(MediaInterface::class)->findMedia([
             'collection' => $collection,
@@ -365,11 +384,6 @@ class ImportSuluLinkedinFeedCommand extends Command
             $image = $image_chk[0];
         }
         if (!$image) {
-            if (!file_exists($path.'/public/sunsetbeat_tmp_files')) {
-                mkdir($path.'/public/sunsetbeat_tmp_files', 0777, true);
-            }
-            $imageData = file_get_contents($link);
-            file_put_contents($saveTo, $imageData);
 
             $uploadedFile = new UploadedFile($saveTo, basename($saveTo));
             $collection = $this->systemCollectionManager->getSystemCollection('sunsetbeat.images_linkedin');
@@ -387,8 +401,8 @@ class ImportSuluLinkedinFeedCommand extends Command
                 1
             );
             $image = $this->entityManager->getRepository(MediaInterface::class)->find($media->getId());
-            unlink($saveTo);
         }
+        unlink($saveTo);
 
         return $image;
     }

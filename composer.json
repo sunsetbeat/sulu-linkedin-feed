@@ -2,7 +2,7 @@
     "name": "sunsetbeat/sulu-linkedin-feed",
     "description": "A Sulu/Symfony bundle that fetches and renders LinkedIn feeds as Sulu content blocks.",
     "type": "sulu-bundle",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "require": {
         "sulu/sulu": "^2.6"
     },
